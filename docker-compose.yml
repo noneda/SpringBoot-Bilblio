@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  app-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: bibiliodigit:latest
+    container_name: bibilio_app
+
+    environment:
+      DATABASE_URL_HOST: ${DB_URL}
+      DATABASE_USER: ${DB_USER}
+      DATABASE_PASSWORD: ${DB_PASSWORD}
+      DATABASE_NAME: ${DB_NAME}
+      DATABASE_PORT: ${DB_PORT}
+
+    depends_on:
+      - db
+
+    networks:
+      - app-network
+
+  db:
+    image: postgres:16-alpine
+    container_name: bibilio_db
+    restart: always
+
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db-data:

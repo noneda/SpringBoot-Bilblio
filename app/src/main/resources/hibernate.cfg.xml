@@ -1,0 +1,12 @@
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+        <property name="hibernate.connection.url">jdbc:postgresql://DB_HOST:5432/DB_NAME</property>
+        <property name="hibernate.connection.username">DB_USER</property>
+        <property name="hibernate.connection.password">DB_PASS</property>
+
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        <property name="hibernate.show_sql">true</property>
+    </session-factory>
+</hibernate-configuration>
