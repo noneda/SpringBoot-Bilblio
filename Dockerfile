@@ -15,13 +15,13 @@ COPY app/src /app-build/app/src
 
 # Construcción
 RUN chmod +x ./gradlew
-RUN ./gradlew :app:clean :app:build -x test
+RUN ./gradlew :app:clean :app:build
 
 # --- Stage 2: Runtime ---
 FROM amazoncorretto:21-alpine
 
 WORKDIR /app
 
-COPY --from=build /app-build/app/build/libs/app-all.jar .
+COPY --from=build /app-build/app/build/libs/app.jar .
 
-ENTRYPOINT ["java", "-jar", "app-all.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

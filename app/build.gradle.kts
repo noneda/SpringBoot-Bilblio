@@ -1,10 +1,16 @@
 plugins {
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.java)
     application
-    kotlin("jvm") version "2.0.21"
 }
 
-application {
-    mainClass.set("org.bibliodigit.App")
+group = "org.gradle.samples"
+version = "1.0.2"
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(libs.versions.java.get().toInt()))
+    }
 }
 
 repositories {
@@ -12,38 +18,22 @@ repositories {
 }
 
 dependencies {
-    implementation(libs.hibernate.core)
-    implementation(libs.postgresql)
-    implementation(libs.slf4j.api)
-    implementation(libs.logback.classic)
-    implementation(libs.jakarta.persistence.api)
+    implementation(platform(libs.spring.boot.dependencies))
 
-    testImplementation(kotlin("test"))
-    testImplementation(libs.junit.jupiter)
+    implementation(libs.spring.boot.starter)
+
+    testImplementation(libs.spring.boot.starter.test)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
-tasks.test {
+application {
+    mainClass.set("org.bibliodigit.App")
+}
+
+tasks.named<Test>("test") {
     useJUnitPlatform()
 }
 
-tasks.jar {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    manifest {
-        attributes["Main-Class"] = application.mainClass.get()
-    }
-
-    from(
-        configurations.runtimeClasspath.get().map {
-            if (it.isDirectory) it else zipTree(it)
-        }
-    )
-
-    archiveFileName.set("app-all.jar")
-}
-
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
-    }
+tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+    archiveFileName.set("app.jar")
 }

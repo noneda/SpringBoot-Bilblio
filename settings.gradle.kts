@@ -4,14 +4,15 @@
  * The settings file is used to specify which projects to include in your build.
  * For more detailed information on multi-project builds, please refer to https://docs.gradle.org/9.2.0/userguide/multi_project_builds.html in the Gradle documentation.
  */
-rootProject.name = "bibliodigit"
 
-include("app")
-
-dependencyResolutionManagement {
+pluginManagement {
     repositories {
+        gradlePluginPortal()
         mavenCentral()
     }
+}
+
+dependencyResolutionManagement {
 
     versionCatalogs {
         create("catalog") {   
@@ -19,3 +20,6 @@ dependencyResolutionManagement {
         }
     }
 }
+
+rootProject.name = "bibliodigit"
+include("app")

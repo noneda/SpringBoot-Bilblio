@@ -1,19 +1,12 @@
 package org.bibliodigit;
 
-import org.hibernate.Session;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+@SpringBootApplication
 public class App {
+
     public static void main(String[] args) {
-        DriverHibernate driver = new DriverHibernate();
-        Session session = driver.getSession();
-
-        session.beginTransaction();
-
-        // Solo ejemplo: un print
-        System.out.println("Conectado a la BD desde Docker correctamente");
-
-        session.getTransaction().commit();
-        session.close();
+        SpringApplication.run(App.class, args);
     }
 }
- 
