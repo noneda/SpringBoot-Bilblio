@@ -22,6 +22,7 @@ dependencies {
 
     implementation(libs.starter.web)
     implementation(libs.starter.data.jpa)
+    implementation(libs.starter.validation)  
 
     // PostgreSQL para producción
     runtimeOnly(libs.postgresql)

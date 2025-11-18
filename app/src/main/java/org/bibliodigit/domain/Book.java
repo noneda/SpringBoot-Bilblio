@@ -1,7 +1,13 @@
 package org.bibliodigit.domain;
 
 import jakarta.persistence.*;
+import lombok.*;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "books")
 public class Book {
@@ -10,30 +16,25 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, length = 255)
     private String title;
 
-    private Long authorId;
+    @Column(nullable = false, length = 4)
+    private Integer year; 
 
-    private Long categoryId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id", referencedColumnName = "id")
+    private Author author;
 
-    public Book() {}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    private Category category;
 
-    public Book(Long id, String title, Long authorId, Long categoryId) {
-        this.id = id;
-        this.title = title;
-        this.authorId = authorId;
-        this.categoryId = categoryId;
+    public void setAuthor(Author author) {
+        this.author = author;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-
-    public Long getAuthorId() { return authorId; }
-    public void setAuthorId(Long authorId) { this.authorId = authorId; }
-
-    public Long getCategoryId() { return categoryId; }
-    public void setCategoryId(Long categoryId) { this.categoryId = categoryId; }
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 }

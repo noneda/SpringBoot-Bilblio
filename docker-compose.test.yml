@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  test-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: test  
+    container_name: bibilio_test_runner
+    environment:
+      SPRING_PROFILES_ACTIVE: test
+    volumes:
+      - ./app/build/test-results:/app-build/app/build/test-results
+      - ./app/build/reports:/app-build/app/build/reports
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge

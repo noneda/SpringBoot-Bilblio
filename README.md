@@ -62,7 +62,12 @@ bibliodigit/
 │   │   └── resources/
 │   │       └── application.properties
 │   └── test/
-│       ├── java/
+│       ├─── java/org/bibliodigit/
+│       │    ├── api/ 
+│       │    ├── application/
+│       │    │   └── service/
+│       │    ├── integration/
+│       │    └── repository/
 │       └── resources/
 │           └── application-test.properties
 ├── docker-compose.yml
@@ -95,6 +100,11 @@ docker-compose down
 ```
 
 La aplicación estará disponible en: **http://localhost:8080**
+
+Y para los test el siguiente commando
+```bash
+docker build --target test --no-cache -t bibliodigit-test:latest .
+```
 
 ### Opción 2: Reconstruir después de cambios
 
@@ -157,6 +167,33 @@ GET http://localhost:8080/api/health
 }
 ```
 
+
+### Book API`s
+#### CRUD:
+```http
+POST   /api/books                    # Crear libro
+GET    /api/books                    # Listar todos
+GET    /api/books/{id}               # Obtener por ID
+PUT    /api/books/{id}               # Actualizar
+DELETE /api/books/{id}               # Eliminar
+```
+
+#### Búsquedas
+```http
+GET /api/books/search/title?keyword=clean
+GET /api/books/author/{authorId}
+GET /api/books/search/author?name=tolkien
+GET /api/books/category/{categoryId}
+GET /api/books/search/category?name=Fiction
+GET /api/books/year/2020
+GET /api/books/year-range?start=2000&end=2020
+```
+### Estadísticas
+```http
+GET /api/books/count/author/{authorId}
+GET /api/books/count/category/{categoryId}
+GET /api/books/exists?title=Clean Code
+```
 ## 🗄️ Base de Datos
 
 ### Conexión Directa a PostgreSQL
