@@ -15,4 +15,6 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
     List<Author> findByNationality(String nationality);
     
     List<Author> findByBooksIsNotEmpty();
+
+    boolean existsByName(String title);
 }
