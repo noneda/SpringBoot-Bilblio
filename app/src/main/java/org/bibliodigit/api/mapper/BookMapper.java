@@ -1,7 +1,7 @@
 package org.bibliodigit.api.mapper;
 
-import org.bibliodigit.api.dto.BookRequest;
-import org.bibliodigit.api.dto.BookResponse;
+import org.bibliodigit.api.dto.req.BookRequest;
+import org.bibliodigit.api.dto.res.BookResponse;
 import org.bibliodigit.domain.Author;
 import org.bibliodigit.domain.Book;
 import org.bibliodigit.domain.Category;

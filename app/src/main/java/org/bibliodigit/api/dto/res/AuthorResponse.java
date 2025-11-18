@@ -1,4 +1,4 @@
-package org.bibliodigit.api.dto;
+package org.bibliodigit.api.dto.res;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

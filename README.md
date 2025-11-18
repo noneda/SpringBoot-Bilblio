@@ -52,6 +52,8 @@ bibliodigit/
 │   │   │   ├── App.java                      # Clase principal
 │   │   │   ├── api/                          # Controladores REST
 │   │   │   │   ├── dto/                      # Data Transfer Objects
+│   │   │   │   │  ├── req/                   
+│   │   │   │   │  └── res/
 │   │   │   │   ├── exception/                # Manejo de excepciones
 │   │   │   │   └── mapper/                   # Mappers
 │   │   │   ├── application/                  # Casos de uso

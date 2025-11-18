@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import jakarta.validation.Valid;
 
-import org.bibliodigit.api.dto.BookRequest;
-import org.bibliodigit.api.dto.BookResponse;
+import org.bibliodigit.api.dto.req.BookRequest;
+import org.bibliodigit.api.dto.res.BookResponse;
 import org.bibliodigit.api.mapper.BookMapper;
 import org.bibliodigit.domain.Book;
 import org.bibliodigit.domain.port.BookService;

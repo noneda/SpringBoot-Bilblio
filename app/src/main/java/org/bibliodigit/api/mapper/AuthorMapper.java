@@ -1,7 +1,7 @@
 package org.bibliodigit.api.mapper;
 
-import org.bibliodigit.api.dto.AuthorRequest;
-import org.bibliodigit.api.dto.AuthorResponse;
+import org.bibliodigit.api.dto.req.AuthorRequest;
+import org.bibliodigit.api.dto.res.AuthorResponse;
 import org.bibliodigit.domain.Author;
 import org.springframework.stereotype.Component;
 
