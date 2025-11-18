@@ -4,7 +4,7 @@ plugins {
     application
 }
 
-group = "org.gradle.samples"
+group = "org.bibliodigit"
 version = "1.0.2"
 
 java {
@@ -20,9 +20,20 @@ repositories {
 dependencies {
     implementation(platform(libs.spring.boot.dependencies))
 
-    implementation(libs.spring.boot.starter)
+    implementation(libs.starter.web)
+    implementation(libs.starter.data.jpa)
 
-    testImplementation(libs.spring.boot.starter.test)
+    // PostgreSQL para producción
+    runtimeOnly(libs.postgresql)
+    
+    // H2 solo para tests
+    testRuntimeOnly(libs.h2)
+    
+    compileOnly(libs.java.lombok)
+    annotationProcessor(libs.java.lombok)
+
+    testImplementation(libs.starter.test)
+    testAnnotationProcessor(libs.java.lombok)
     testRuntimeOnly(libs.junit.platform.launcher)
 }
 
