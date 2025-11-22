@@ -21,6 +21,272 @@ API REST para gestión de biblioteca digital construida con Spring Boot 3.4.1 y 
 - Java 21 (solo para desarrollo local)
 - Gradle 9.2+ (opcional, se usa wrapper)
 
+
+## Diagramas 
+
+### Diagrama de Caso de Uso
+
+```mermaid
+graph TB
+    User((Usuario))
+    Student((Estudiante))
+    Teacher((Docente))
+    External((Externo))
+    Admin((Administrador))
+    
+    User -->|hereda| Student
+    User -->|hereda| Teacher
+    User -->|hereda| External
+    
+    Student --> UC1[Consultar Libros Disponibles]
+    Student --> UC2[Solicitar Préstamo]
+    Student --> UC3[Devolver Libro]
+    Student --> UC4[Ver Mis Préstamos]
+    
+    Teacher --> UC1
+    Teacher --> UC2
+    Teacher --> UC3
+    Teacher --> UC4
+    
+    External --> UC1
+    External --> UC2
+    External --> UC3
+    External --> UC4
+    
+    Admin --> UC5[Registrar Libro]
+    Admin --> UC6[Gestionar Usuarios]
+    Admin --> UC7[Ver Todos los Préstamos]
+    Admin --> UC8[Calcular Multas]
+    
+    UC2 --> |valida| System[Sistema]
+    UC3 --> |actualiza| System
+    System --> |verifica disponibilidad| UC1
+    System --> |aplica reglas| UC2
+```
+
+### Diagrama de Clases
+
+```mermaid
+classDiagram
+    %% ========== ENTIDADES DE DOMINIO ==========
+    
+    class Book {
+        -Long id
+        -String title
+        -String isbn
+        -Integer year
+        -Author author
+        -Category category
+        +getId()
+        +getTitle()
+        +getIsbn()
+    }
+    
+    class Author {
+        -Long id
+        -String name
+        -String nationality
+        -List~Book~ books
+        +getId()
+        +getName()
+    }
+    
+    class Category {
+        -Long id
+        -String name
+        -String description
+        -List~Book~ books
+        +getId()
+        +getName()
+    }
+    
+    class User {
+        -Long id
+        -String name
+        -String email
+        -String password
+        -TypeUser typeUser
+        -Boolean isActive
+        +getId()
+        +getName()
+        +getTypeUser()
+    }
+    
+    class TypeUser {
+        -Long id
+        -String type
+        -String description
+        -Integer maxBooks
+        -Integer maxDays
+        +getType()
+        +getMaxBooks()
+        +getMaxDays()
+    }
+    
+    class Stock {
+        -Long id
+        -Book book
+        -User user
+        -Boolean availability
+        -LocalDateTime departureDate
+        -LocalDateTime deliveryDate
+        -LoanStatus status
+        +isAvailable()
+        +getDaysOverdue()
+        +calculateFine()
+    }
+    
+    class LoanStatus {
+        <<enumeration>>
+        ACTIVE
+        RETURNED
+        OVERDUE
+    }
+    
+    %% ========== RELACIONES DE DOMINIO ==========
+    
+    Book "N" --> "1" Author : belongsTo
+    Book "N" --> "1" Category : belongsTo
+    User "N" --> "1" TypeUser : hasType
+    Stock "N" --> "1" Book : references
+    Stock "N" --> "1" User : borrowedBy
+    Stock --> LoanStatus : hasStatus
+    
+    %% ========== INTERFACES DE REPOSITORIO ==========
+    
+    class BookRepository {
+        <<interface>>
+        +findAll() List~Book~
+        +findById(Long) Optional~Book~
+        +save(Book) Book
+        +findByIsbn(String) Optional~Book~
+    }
+    
+    class UserRepository {
+        <<interface>>
+        +findAll() List~User~
+        +findById(Long) Optional~User~
+        +findByEmail(String) Optional~User~
+        +save(User) User
+    }
+    
+    class StockRepository {
+        <<interface>>
+        +findAll() List~Stock~
+        +findById(Long) Optional~Stock~
+        +save(Stock) Stock
+        +findByUserIdAndStatus(Long, LoanStatus) List~Stock~
+        +findByBookIdAndAvailability(Long, Boolean) Optional~Stock~
+        +countActiveLoansForUser(Long) Long
+    }
+    
+    %% ========== INTERFACES DE SERVICIO (PUERTOS) ==========
+    
+    class LoanService {
+        <<interface>>
+        +borrowBook(Long userId, Long bookId) Stock
+        +returnBook(Long stockId) Stock
+        +getActiveLoansForUser(Long userId) List~Stock~
+        +getOverdueLoans() List~Stock~
+        +calculateFine(Long stockId) BigDecimal
+    }
+    
+    class BookService {
+        <<interface>>
+        +findAll() List~Book~
+        +findById(Long id) Optional~Book~
+        +findAvailableBooks() List~Book~
+        +searchByTitle(String title) List~Book~
+    }
+    
+    class UserService {
+        <<interface>>
+        +register(RegisterRequest) User
+        +findById(Long id) Optional~User~
+        +canUserBorrow(Long userId) boolean
+    }
+    
+    %% ========== IMPLEMENTACIONES DE SERVICIO ==========
+    
+    class LoanServiceImpl {
+        -StockRepository stockRepository
+        -BookRepository bookRepository
+        -UserRepository userRepository
+        -LoanValidatorFactory validatorFactory
+        +borrowBook(Long, Long) Stock
+        +returnBook(Long) Stock
+        +calculateFine(Long) BigDecimal
+    }
+    
+    class BookServiceImpl {
+        -BookRepository bookRepository
+        -StockRepository stockRepository
+        +findAll() List~Book~
+        +findAvailableBooks() List~Book~
+    }
+    
+    class UserServiceImpl {
+        -UserRepository userRepository
+        -TypeUserRepository typeUserRepository
+        +register(RegisterRequest) User
+        +canUserBorrow(Long) boolean
+    }
+    
+    %% ========== ESTRATEGIA DE VALIDACIÓN (OCP) ==========
+    
+    class LoanValidationStrategy {
+        <<interface>>
+        +canBorrow(User, int) boolean
+        +getMaxBooks() int
+        +getMaxDays() int
+    }
+    
+    class StudentLoanValidator {
+        +canBorrow(User, int) boolean
+        +getMaxBooks() int : 3
+        +getMaxDays() int : 14
+    }
+    
+    class TeacherLoanValidator {
+        +canBorrow(User, int) boolean
+        +getMaxBooks() int : 5
+        +getMaxDays() int : 30
+    }
+    
+    class ExternalLoanValidator {
+        +canBorrow(User, int) boolean
+        +getMaxBooks() int : 2
+        +getMaxDays() int : 7
+    }
+    
+    class LoanValidatorFactory {
+        +getValidator(String) LoanValidationStrategy
+    }
+    
+    %% ========== RELACIONES DE IMPLEMENTACIÓN ==========
+    
+    LoanService <|.. LoanServiceImpl : implements
+    BookService <|.. BookServiceImpl : implements
+    UserService <|.. UserServiceImpl : implements
+    
+    LoanValidationStrategy <|.. StudentLoanValidator : implements
+    LoanValidationStrategy <|.. TeacherLoanValidator : implements
+    LoanValidationStrategy <|.. ExternalLoanValidator : implements
+    
+    LoanServiceImpl --> StockRepository : uses
+    LoanServiceImpl --> BookRepository : uses
+    LoanServiceImpl --> UserRepository : uses
+    LoanServiceImpl --> LoanValidatorFactory : uses
+    
+    BookServiceImpl --> BookRepository : uses
+    BookServiceImpl --> StockRepository : uses
+    
+    UserServiceImpl --> UserRepository : uses
+    
+    LoanValidatorFactory --> LoanValidationStrategy : creates
+```
+
+
 ## 🛠️ Instalación y Configuración
 
 ### 1. Clonar el Repositorio

@@ -13,9 +13,13 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
-
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositories {
+        mavenCentral()
+    }
+    
     versionCatalogs {
-        create("catalog") {   
+        create("libs") {
             from(files("gradle/libs.versions.toml"))
         }
     }

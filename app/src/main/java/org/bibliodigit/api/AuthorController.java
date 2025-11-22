@@ -13,8 +13,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.bibliodigit.security.RequireRole;
+
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @Slf4j
 @RestController
@@ -28,6 +31,7 @@ public class AuthorController {
     // ========== BASIC CRUD OPERATIONS ==========
 
     @PostMapping
+    @RequireRole("ADMIN")
     public ResponseEntity<AuthorResponse> createAuthor(@Valid @RequestBody AuthorRequest request) {
         log.debug("Creating author: {}", request.getName());
 
@@ -66,6 +70,7 @@ public class AuthorController {
     }
 
     @PutMapping("/{id}")
+    @RequireRole("ADMIN")
     public ResponseEntity<AuthorResponse> updateAuthor(
             @PathVariable Long id,
             @Valid @RequestBody AuthorRequest request) {
@@ -85,6 +90,7 @@ public class AuthorController {
     }
 
     @DeleteMapping("/{id}")
+    @RequireRole("ADMIN")
     public ResponseEntity<Void> deleteAuthor(@PathVariable Long id) {
         log.debug("Deleting author with id: {}", id);
 

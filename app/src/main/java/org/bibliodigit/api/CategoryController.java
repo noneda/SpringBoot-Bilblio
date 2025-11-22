@@ -13,8 +13,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.bibliodigit.security.RequireRole;
+
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @Slf4j
 @RestController
@@ -28,6 +31,7 @@ public class CategoryController {
     // ========== BASIC CRUD OPERATIONS ==========
 
     @PostMapping
+    @RequireRole("ADMIN")
     public ResponseEntity<CategoryResponse> createCategory(@Valid @RequestBody CategoryRequest request) {
         log.debug("Creating category: {}", request.getName());
 
@@ -66,6 +70,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
+    @RequireRole("ADMIN")
     public ResponseEntity<CategoryResponse> updateCategory(
             @PathVariable Long id,
             @Valid @RequestBody CategoryRequest request) {
@@ -87,6 +92,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
+    @RequireRole("ADMIN")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
         log.debug("Deleting category with id: {}", id);
 
@@ -103,6 +109,7 @@ public class CategoryController {
     // ========== SEARCH BY NAME ==========
 
     @GetMapping("/search")
+    @RequireRole("ADMIN")
     public ResponseEntity<List<CategoryResponse>> findByName(@RequestParam String name) {
 
         log.debug("Searching categories by name: {}", name);

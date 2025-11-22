@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.bibliodigit.security.RequireRole;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +30,7 @@ public class BookController {
     // ========== BASIC CRUD OPERATIONS ==========
 
     @PostMapping
+    @RequireRole({"ADMIN"})
     public ResponseEntity<BookResponse> createBook(@Valid @RequestBody BookRequest request) {
         log.debug("Creating book: {}", request.getTitle());
         
@@ -68,6 +71,7 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
+    @RequireRole({"ADMIN"})
     public ResponseEntity<BookResponse> updateBook(
             @PathVariable Long id, 
             @RequestBody BookRequest request) {
@@ -86,6 +90,7 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}")
+    @RequireRole({"ADMIN"})
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
         log.debug("Deleting book with id: {}", id);
         

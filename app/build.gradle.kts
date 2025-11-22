@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.spring.boot)
-    alias(libs.plugins.java)
+    alias(libs.plugins.spring.dependency.management)  // ← AGREGAR
+    java
     application
 }
 
@@ -9,7 +10,7 @@ version = "1.0.2"
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(libs.versions.java.get().toInt()))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
@@ -18,23 +19,23 @@ repositories {
 }
 
 dependencies {
-    implementation(platform(libs.spring.boot.dependencies))
-
+    // Spring Boot Starters
     implementation(libs.starter.web)
     implementation(libs.starter.data.jpa)
-    implementation(libs.starter.validation)  
+    implementation(libs.starter.validation)
 
-    // PostgreSQL para producción
+    // Base de Datos
     runtimeOnly(libs.postgresql)
-    
-    // H2 solo para tests
     testRuntimeOnly(libs.h2)
     
+    // Lombok
     compileOnly(libs.java.lombok)
     annotationProcessor(libs.java.lombok)
-
-    testImplementation(libs.starter.test)
+    testCompileOnly(libs.java.lombok)
     testAnnotationProcessor(libs.java.lombok)
+
+    // Testing
+    testImplementation(libs.starter.test)
     testRuntimeOnly(libs.junit.platform.launcher)
 }
 
@@ -42,10 +43,10 @@ application {
     mainClass.set("org.bibliodigit.App")
 }
 
-tasks.named<Test>("test") {
+tasks.test {
     useJUnitPlatform()
 }
 
-tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+tasks.bootJar {
     archiveFileName.set("app.jar")
 }
